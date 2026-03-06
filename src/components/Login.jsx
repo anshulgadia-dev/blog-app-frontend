@@ -37,7 +37,7 @@ const Login = () => {
           Welcome Back
         </h2>
 
-        {/* {error && <p className="text-red-500 text-center mb-4">{error}</p>} */}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col">

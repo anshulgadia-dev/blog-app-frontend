@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const tokenFromStorage = localStorage.getItem("token")
   ? localStorage.getItem("token")
