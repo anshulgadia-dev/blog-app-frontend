@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { addBlog } from "../redux/slices/blogsSlice.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const AddBlog = () => {
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.blog);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
@@ -26,11 +28,13 @@ const AddBlog = () => {
     e.preventDefault();
     dispatch(addBlog(formData))
       .unwrap()
-      .then((data) => {
-        console.log("blog Added");
+      .then(() => {
+        toast.success("Blog Published");
+        navigate("/");
       })
       .catch((err) => {
         if (err.status === 401) {
+          toast.error("Login First");
           navigate("/login");
         }
       });
@@ -115,7 +119,7 @@ const AddBlog = () => {
               type="submit"
               className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition duration-300"
             >
-              Publish Blog
+              {loading ? "Publishing..." : "Publish Blog"}
             </button>
           </form>
         </div>

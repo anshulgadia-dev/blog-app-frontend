@@ -62,10 +62,44 @@ export const addBlog = createAsyncThunk(
   },
 );
 
+export const toggleLike = createAsyncThunk(
+  "blog/toggleLike",
+  async (blogId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/blog/like/${blogId}`,
+        {},
+        { withCredentials: true },
+      );
+      return response?.data;
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        return rejectWithValue({
+          status: 401,
+          message: "Please Login First",
+        });
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  },
+);
+
 const blogSlice = createSlice({
   name: "blog",
   initialState,
-  reducers: {},
+  reducers: {
+    likeRealTime: (state, action) => {
+      state.blogs = state.blogs.map((b) => {
+        if (b._id === action.payload.blogId) {
+          return {
+            ...b,
+            likesCount: action.payload.likesCount,
+          };
+        }
+        return b;
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllBlogs.pending, (state) => {
@@ -93,8 +127,19 @@ const blogSlice = createSlice({
       .addCase(addBlog.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message;
+      })
+
+      .addCase(toggleLike.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(toggleLike.fulfilled, (state) => {
+        state.error = null;
+      })
+      .addCase(toggleLike.rejected, (state, action) => {
+        state.error = action.payload.message;
       });
   },
 });
 
+export const { likeRealTime } = blogSlice.actions;
 export default blogSlice.reducer;

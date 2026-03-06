@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/slices/authSlice";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const Login = () => {
   };
 
   if (user) {
+    toast.success("Logged In");
     navigate("/");
   }
 
@@ -35,7 +37,7 @@ const Login = () => {
           Welcome Back
         </h2>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {/* {error && <p className="text-red-500 text-center mb-4">{error}</p>} */}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col">

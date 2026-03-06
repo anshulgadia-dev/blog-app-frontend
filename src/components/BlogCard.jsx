@@ -1,9 +1,41 @@
 import { imageURLResolver } from "../config/imageUrlResolver";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FcLikePlaceholder } from "react-icons/fc";
+import { FcLike } from "react-icons/fc";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLike, likeRealTime } from "../redux/slices/blogsSlice";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import socket from "../socket";
 
 const BlogCard = ({ data }) => {
   const imageurl = imageURLResolver(data.image);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading } = useSelector((state) => state.blog);
 
+  useEffect(() => {
+    socket.on("like", (res) => {
+      dispatch(likeRealTime(res));
+    });
+  }, []);
+
+  const handleToggleLike = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dispatch(toggleLike(data._id))
+      .unwrap()
+      .then((res) => {
+        toast.success(res.message);
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          toast.error(err.message);
+          navigate("/login");
+        }
+      });
+  };
   return (
     <Link
       to={`/blog/${data._id}`}
@@ -39,9 +71,12 @@ const BlogCard = ({ data }) => {
         {/* Footer */}
         <div className="flex justify-between items-center pt-3 text-sm text-gray-500">
           {/* Author */}
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-            <span>Author</span>
+          <div className="flex items-center gap-2 w-14 h-14">
+            <FcLikePlaceholder
+              onClick={handleToggleLike}
+              className="w-12 h-12 hover:cursor-pointer hover:scale-110 duration-200"
+            />
+            <span>{data.likesCount}</span>
           </div>
 
           {/* Read More */}

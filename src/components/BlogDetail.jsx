@@ -1,11 +1,25 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, data } from "react-router-dom";
 import { imageURLResolver } from "../config/imageUrlResolver";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addComment,
+  addCommentRealTime,
+  getComments,
+} from "../redux/slices/commentSlice";
+import { toast } from "react-toastify";
+import socket from "../socket";
 
 export const BlogDetail = () => {
+  const navigate = useNavigate();
   const blogId = useParams().id;
   const [blog, setBlog] = useState(null);
+  const [message, setMessage] = useState("");
+  const dispatch = useDispatch();
+  const { comments, loading, addCommentState } = useSelector(
+    (state) => state.comment,
+  );
 
   const getBlog = async () => {
     try {
@@ -22,8 +36,45 @@ export const BlogDetail = () => {
     }
   };
 
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (message.trim() === "") return;
+
+    dispatch(addComment({ blogId, commentData: { message: message } }))
+      .unwrap()
+      .then(() => {
+        console.log("Comment Added");
+        toast.success("Commented");
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          toast.error("Login First");
+          navigate("/login");
+        }
+      });
+
+    console.log(message);
+
+    setMessage("");
+  };
+
+  useEffect(() => {
+    const handleNewComment = (data) => {
+      console.log(data);
+      dispatch(addCommentRealTime(data));
+    };
+
+    socket.on("new-comment", handleNewComment);
+
+    return () => {
+      socket.off("new-comment", handleNewComment);
+    };
+  }, [dispatch]);
+
   useEffect(() => {
     getBlog();
+    dispatch(getComments(blogId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blogId]);
 
   if (!blog) {
@@ -73,8 +124,53 @@ export const BlogDetail = () => {
                 Comments
               </h2>
 
-              <div className="bg-gray-50 p-4 rounded-lg text-gray-500">
-                No comments yet.
+              <div className="mt-6">
+                <form className="flex flex-col gap-3">
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Write your comment..."
+                    rows="3"
+                    className="w-full resize-none rounded-lg border border-gray-300 p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleCommentSubmit}
+                      type="submit"
+                      className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-200 cursor-pointer"
+                    >
+                      {addCommentState.loading ? "Posting..." : "Post Comment"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg text-gray-500 mt-4">
+                {loading
+                  ? "Loading Comments..."
+                  : comments?.length === 0
+                    ? "No comments yet"
+                    : comments?.map((c) => (
+                        <div
+                          key={c._id}
+                          className="bg-white p-3 rounded-md shadow-sm mb-3 flex justify-between items-start"
+                        >
+                          <div>
+                            <p className="text-sm font-semibold text-gray-800">
+                              {c.userName}
+                            </p>
+                            <p className="text-gray-700 text-sm">{c.message}</p>
+                          </div>
+
+                          {/* <button
+                            onClick={() => dispatch(deleteComment(c._id))}
+                            className="text-red-500 text-sm hover:text-red-700"
+                          >
+                            Delete
+                          </button> */}
+                        </div>
+                      ))}
               </div>
             </div>
           </div>

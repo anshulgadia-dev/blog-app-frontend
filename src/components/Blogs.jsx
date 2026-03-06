@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import BlogCard from "./BlogCard";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllBlogs } from "../redux/slices/blogsSlice";
@@ -9,6 +8,7 @@ const Blogs = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchAllBlogs());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {

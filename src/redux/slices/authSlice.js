@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const tokenFromStorage = localStorage.getItem("token")
   ? localStorage.getItem("token")
@@ -23,6 +24,7 @@ export const loginUser = createAsyncThunk(
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/login`,
         userData,
+        { withCredentials: true },
       );
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -41,6 +43,7 @@ export const registerUser = createAsyncThunk(
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/register`,
         userData,
+        { withCredentials: true },
       );
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

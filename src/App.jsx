@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import BlogDetail from "./components/BlogDetail";
@@ -17,6 +19,7 @@ const app = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/addblog" element={<AddBlog />} />
         </Routes>
+        <ToastContainer theme="dark" autoClose={3000} />
       </BrowserRouter>
     </>
   );
