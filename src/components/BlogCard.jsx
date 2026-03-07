@@ -70,12 +70,12 @@ const BlogCard = ({ data }) => {
 
         {/* Footer */}
         <div className="flex justify-between items-center pt-3 text-sm text-gray-500">
-          {/* Author */}
           <div className="flex items-center gap-2 w-14 h-14">
             <FcLikePlaceholder
               onClick={handleToggleLike}
               className="w-12 h-12 hover:cursor-pointer hover:scale-110 duration-200"
             />
+
             <span>{data.likesCount}</span>
           </div>
 

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import BlogCard from "./BlogCard";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllBlogs } from "../redux/slices/blogsSlice";
+import BlogSkeleton from "./BlogSkeleton";
 
 const Blogs = () => {
   const { blogs, loading, error } = useSelector((state) => state.blog);
@@ -11,9 +12,9 @@ const Blogs = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
+  // if (loading) {
+  //   return <h2>Loading...</h2>;
+  // }
 
   if (error) {
     console.log(error);
@@ -32,9 +33,9 @@ const Blogs = () => {
       </div>
 
       <div className="max-w-7xl mx-auto grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {blogs?.map((blog) => (
-          <BlogCard key={blog._id} data={blog} />
-        ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <BlogSkeleton key={i} />)
+          : blogs?.map((blog) => <BlogCard key={blog._id} data={blog} />)}
       </div>
     </div>
   );
