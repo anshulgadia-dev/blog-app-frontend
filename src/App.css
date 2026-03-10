@@ -1,0 +1,18 @@
+.slide-in-top {
+  /* Animation properties */
+  animation-name: slideInTop;
+  animation-duration: 3s; /* Adjust duration as needed */
+  animation-timing-function: ease-out; /* Smooths the animation movement */
+  animation-fill-mode: forwards; /* Ensures the element stays in its final position */
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-200%); /* Start position: off-screen above */
+    opacity: 0; /* Start as invisible */
+  }
+  to {
+    transform: translateY(100); /* End position: original place */
+    opacity: 1; /* End as visible */
+  }
+}

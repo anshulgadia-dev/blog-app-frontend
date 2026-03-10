@@ -7,6 +7,9 @@ import BlogDetail from "./components/BlogDetail";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import AddBlog from "./components/AddBlog";
+import Dropdown from "./components/Dropdown";
+import Profile from "./components/Profile";
+import MyBlogs from "./components/MyBlogs";
 
 const app = () => {
   return (
@@ -18,6 +21,8 @@ const app = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/addblog" element={<AddBlog />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/myblogs" element={<MyBlogs />} />
         </Routes>
         <ToastContainer theme="dark" autoClose={3000} />
       </BrowserRouter>

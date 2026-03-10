@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../redux/slices/authSlice.js";
 import { toast } from "react-toastify";
+import Dropdown from "./Dropdown.jsx";
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -30,7 +31,15 @@ const Navbar = () => {
               >
                 Logout
               </button>
-              <p>Hi! {user?.name}</p>
+              {/* <p>Hi! {user?.name}</p> */}
+
+              <Dropdown
+                title={`Hi ! ${user.name}`}
+                options={[
+                  { title: "Profile", path: "/profile" },
+                  { title: "My Blogs", path: "/myblogs" },
+                ]}
+              />
             </>
           ) : (
             <Link
